@@ -54,7 +54,7 @@ public class JwtTokenUtil {
                 //Anything below here is Registered Claims that follows JWTs standard
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours from current time
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hours from current time
                 .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
                 .compact(); //finalize the creation of jwt
     }
@@ -91,9 +91,9 @@ public class JwtTokenUtil {
     }
 
     //Generate RefreshToken
-    public RefreshToken generateRefreshToken(AuthenticationRequest authenticationRequest){
-        User user = userRepository.findByUsername(authenticationRequest.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Username: " + authenticationRequest.getUsername() + ", not found"));
+    public RefreshToken generateRefreshToken(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username: " + username + ", not found"));
 
         return createRefreshToken(user);
     }
@@ -108,6 +108,23 @@ public class JwtTokenUtil {
 
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
+    }
+
+    public String getNewAccessTokenWithRefresh(String refreshToken){
+        RefreshToken currentRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Invalid Refresh Token"));
+
+        //Check if the refresh token has expired
+        log.info("Expiry Date: " + currentRefreshToken.getExpiryDate());
+        log.info("Now: " + Instant.now());
+        if(currentRefreshToken.getExpiryDate().isBefore(Instant.now())){
+           throw new RuntimeException("Refresh Token has expired");
+        }
+
+        String newAccessToken = generateAccessToken(currentRefreshToken.getUser().getUsername());
+
+        return newAccessToken;
+
     }
 
 }

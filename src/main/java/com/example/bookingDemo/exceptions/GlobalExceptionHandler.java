@@ -35,4 +35,14 @@ public class GlobalExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         LocalDateTime.now()));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<BaseResponse> runtimeException(RuntimeException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new BaseResponse(ex.getMessage(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        LocalDateTime.now()));
+    }
 }

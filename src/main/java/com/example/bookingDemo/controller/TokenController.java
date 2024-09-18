@@ -33,7 +33,7 @@ public class TokenController {
 
     @PostMapping("/generateRefreshToken")
     public RefreshToken generateRefreshToken(@RequestBody AuthenticationRequest authenticationRequest){
-        return jwtTokenUtil.generateRefreshToken(authenticationRequest);
+        return jwtTokenUtil.generateRefreshToken(authenticationRequest.getUsername());
     }
 
     @PostMapping("/extractUsername")
@@ -44,5 +44,10 @@ public class TokenController {
     @PostMapping("/validateToken")
     public boolean validateToken(@RequestBody ExtractTokenRequestDTO extractTokenRequestDTO){
         return jwtTokenUtil.validateToken(extractTokenRequestDTO.getToken(), extractTokenRequestDTO.getUsername());
+    }
+
+    @PostMapping("/getNewAccessTokenWithRefresh")
+    public String getNewAccessTokenWithRefresh(@RequestBody ExtractTokenRequestDTO extractTokenRequestDTO){
+        return jwtTokenUtil.getNewAccessTokenWithRefresh(extractTokenRequestDTO.getToken());
     }
 }
