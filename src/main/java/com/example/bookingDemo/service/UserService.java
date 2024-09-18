@@ -6,7 +6,9 @@ import com.example.bookingDemo.dto.authentication.RegisterRequest;
 import com.example.bookingDemo.enums.StatusEnum;
 import com.example.bookingDemo.exceptions.UserAlreadyExistsException;
 import com.example.bookingDemo.enums.RoleEnum;
+import com.example.bookingDemo.model.RefreshToken;
 import com.example.bookingDemo.model.User;
+import com.example.bookingDemo.repository.RefreshTokenRepository;
 import com.example.bookingDemo.repository.UserRepository;
 import com.example.bookingDemo.security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,8 @@ public class UserService {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     AuthenticationManager authenticationManager;
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
 
     public AuthenticationResponse register(RegisterRequest registerRequest){
 
@@ -46,20 +50,22 @@ public class UserService {
 
         userRepository.save(user);
 
-        //Generate Token
-        String jwtToken = jwtTokenUtil.generateToken(registerRequest.getUsername());
+        //Generate Access Token
+        String jwtToken = jwtTokenUtil.generateAccessToken(registerRequest.getUsername());
 
         AuthenticationResponse authenticationResponse =
                 AuthenticationResponse.builder()
                         .status(StatusEnum.SUCCESS.getCode())
                         .dateTime(LocalDateTime.now())
-                        .token(jwtToken)
+                        .accessToken(jwtToken)
                         .build();
         return authenticationResponse;
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest){
         //Authenticate the user
+            //This will use the custom user details service that implements user details service
+            //it is automatically done this way because of the implementation
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
@@ -69,15 +75,18 @@ public class UserService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        //Generate Access Token
+        String jwtToken = jwtTokenUtil.generateAccessToken(authenticationRequest.getUsername());
 
-        //Generate Token
-        String jwtToken = jwtTokenUtil.generateToken(authenticationRequest.getUsername());
+        //Generate Refresh Token
+        RefreshToken refreshToken = jwtTokenUtil.generateRefreshToken(authenticationRequest.getUsername());
 
         AuthenticationResponse authenticationResponse =
                 AuthenticationResponse.builder()
                         .status(StatusEnum.SUCCESS.getCode())
                         .dateTime(LocalDateTime.now())
-                        .token(jwtToken)
+                        .accessToken(jwtToken)
+                        .refreshToken(refreshToken)
                         .build();
 
         return authenticationResponse;

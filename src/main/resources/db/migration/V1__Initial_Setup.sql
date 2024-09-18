@@ -9,9 +9,9 @@ CREATE TABLE users(
 
 CREATE TABLE bookings(
     id BIGINT PRIMARY KEY IDENTITY(1, 1),
-    user_id BIGINT,
-    booking_date DATE,
-    booking_item VARCHAR(100),
-    status VARCHAR(20),
+    user_id BIGINT NOT NULL,
+    booking_date DATE NOT NULL,
+    booking_item VARCHAR(100) NOT NULL,
+    status VARCHAR(20) NOT NULL,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
 )
