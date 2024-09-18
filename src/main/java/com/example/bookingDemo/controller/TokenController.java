@@ -2,6 +2,7 @@ package com.example.bookingDemo.controller;
 
 import com.example.bookingDemo.dto.token.ExtractTokenRequestDTO;
 import com.example.bookingDemo.dto.authentication.AuthenticationRequest;
+import com.example.bookingDemo.model.RefreshToken;
 import com.example.bookingDemo.security.JwtTokenUtil;
 import com.example.bookingDemo.security.KeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ public class TokenController {
     JwtTokenUtil jwtTokenUtil;
     @Autowired
     KeyGenerator keyGenerator;
-
     @GetMapping("/generatebBase64Secret")
     public String generatebBase64Secret(){
         return keyGenerator.getBase64SecretKey();
@@ -26,9 +26,14 @@ public class TokenController {
         return jwtTokenUtil.getJwtSigningKey();
     }
 
-    @PostMapping("/generateToken")
-    public String generateToken(@RequestBody AuthenticationRequest authenticationRequest){
-        return jwtTokenUtil.generateToken(authenticationRequest.getUsername());
+    @PostMapping("/generateAccessToken")
+    public String generateAccessToken(@RequestBody AuthenticationRequest authenticationRequest){
+        return jwtTokenUtil.generateAccessToken(authenticationRequest.getUsername());
+    }
+
+    @PostMapping("/generateRefreshToken")
+    public RefreshToken generateRefreshToken(@RequestBody AuthenticationRequest authenticationRequest){
+        return jwtTokenUtil.generateRefreshToken(authenticationRequest);
     }
 
     @PostMapping("/extractUsername")

@@ -27,7 +27,9 @@ public class SecurityConfig {
     @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
     @Autowired
-    CustomUserDetailsService userDetailsService;
+    CustomAccessDeniedHandler customAccessDeniedHandler;
+    @Autowired
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     //Security Filter chain is a bean that is responsible for configuring all the http security of our application
@@ -36,6 +38,9 @@ public class SecurityConfig {
             httpSecurity
                     .cors(Customizer.withDefaults())
                     .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable()) // Disable CSRF
+                    .exceptionHandling(exceptionHandling -> exceptionHandling
+                            .authenticationEntryPoint(customAuthenticationEntryPoint)
+                            .accessDeniedHandler(customAccessDeniedHandler))
                     .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                             authorizationManagerRequestMatcherRegistry
                                     .requestMatchers("/token/**").permitAll()  // Permit / white list all requests to /token/**

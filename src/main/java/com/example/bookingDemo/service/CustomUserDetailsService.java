@@ -22,7 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + ", not found"));
 
-
         //Convert User Role to Granted Authority Object
         Collection<GrantedAuthority> authorities =
                 Arrays.asList(new SimpleGrantedAuthority(user.getRole().name()));

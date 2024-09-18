@@ -47,7 +47,7 @@ public class UserService {
         userRepository.save(user);
 
         //Generate Token
-        String jwtToken = jwtTokenUtil.generateToken(registerRequest.getUsername());
+        String jwtToken = jwtTokenUtil.generateAccessToken(registerRequest.getUsername());
 
         AuthenticationResponse authenticationResponse =
                 AuthenticationResponse.builder()
@@ -60,6 +60,8 @@ public class UserService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest){
         //Authenticate the user
+            //This will use the custom user details service that implements user details service
+            //it is automatically done this way because of the implementation
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
@@ -71,7 +73,7 @@ public class UserService {
 
 
         //Generate Token
-        String jwtToken = jwtTokenUtil.generateToken(authenticationRequest.getUsername());
+        String jwtToken = jwtTokenUtil.generateAccessToken(authenticationRequest.getUsername());
 
         AuthenticationResponse authenticationResponse =
                 AuthenticationResponse.builder()

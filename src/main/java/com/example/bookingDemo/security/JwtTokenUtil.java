@@ -1,16 +1,26 @@
 package com.example.bookingDemo.security;
 
+import com.example.bookingDemo.dto.authentication.AuthenticationRequest;
+import com.example.bookingDemo.model.RefreshToken;
+import com.example.bookingDemo.model.User;
+import com.example.bookingDemo.repository.RefreshTokenRepository;
+import com.example.bookingDemo.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -22,18 +32,23 @@ public class JwtTokenUtil {
     @Value("${jwt.signing.key}")
     private String base64SigningKey;
 
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    UserRepository userRepository;
+
     public SecretKey getJwtSigningKey(){
         byte[] keyBytes = Decoders.BASE64.decode(base64SigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     //Generate Token for user
-    public String generateToken(String username){
+    public String generateAccessToken(String username){
         HashMap<String, Object> extraClaims = new HashMap<>(); //this can be used to store custom claim like role
-        return createToken(extraClaims, username);
+        return createAccessToken(extraClaims, username);
     }
 
-    private String createToken(HashMap<String, Object> extraClaims, String subject){
+    private String createAccessToken(HashMap<String, Object> extraClaims, String subject){
         return Jwts.builder()
                 .setClaims(extraClaims)
                 //Anything below here is Registered Claims that follows JWTs standard
@@ -73,6 +88,26 @@ public class JwtTokenUtil {
     public boolean validateToken(String token, String username){
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username)) && !isTokenExpired(token);
+    }
+
+    //Generate RefreshToken
+    public RefreshToken generateRefreshToken(AuthenticationRequest authenticationRequest){
+        User user = userRepository.findByUsername(authenticationRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Username: " + authenticationRequest.getUsername() + ", not found"));
+
+        return createRefreshToken(user);
+    }
+
+    public RefreshToken createRefreshToken(User user){
+        RefreshToken refreshToken = RefreshToken.builder()
+                .user(user)
+                .refreshToken(UUID.randomUUID().toString())
+                .createdDate(LocalDateTime.now())
+                .expiryDate(Instant.now().plusMillis(86400000))
+                .build();
+
+        refreshTokenRepository.save(refreshToken);
+        return refreshToken;
     }
 
 }
