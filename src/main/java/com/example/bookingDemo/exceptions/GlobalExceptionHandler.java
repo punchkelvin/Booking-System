@@ -37,7 +37,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<BaseResponse> runtimeException(RuntimeException ex){
+    public ResponseEntity<BaseResponse> handleRuntimeException(RuntimeException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new BaseResponse(ex.getMessage(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<BaseResponse> handleUserNotFoundException(UserNotFoundException ex){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new BaseResponse(ex.getMessage(),
