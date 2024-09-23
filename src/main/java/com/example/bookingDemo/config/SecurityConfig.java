@@ -68,9 +68,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        //storing password in plain text is insecure
-        //this ensure that the password when submitted is hashed first, only then compared with the one hashed in the db
-        return new BCryptPasswordEncoder(); //commonly used to check and hash password
+        return new BCryptPasswordEncoder();
     }
 
 //    @Bean

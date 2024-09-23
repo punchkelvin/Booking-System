@@ -1,6 +1,6 @@
 package com.example.bookingDemo.controller;
 
-import com.example.bookingDemo.dto.token.ExtractTokenRequestDTO;
+import com.example.bookingDemo.dto.token.ExtractTokenRequest;
 import com.example.bookingDemo.dto.authentication.AuthenticationRequest;
 import com.example.bookingDemo.model.RefreshToken;
 import com.example.bookingDemo.security.JwtTokenUtil;
@@ -37,17 +37,17 @@ public class TokenController {
     }
 
     @PostMapping("/extractUsername")
-    public String extractUsername(@RequestBody ExtractTokenRequestDTO extractTokenRequestDTO){
-        return jwtTokenUtil.extractUsername(extractTokenRequestDTO.getToken());
+    public String extractUsername(@RequestBody ExtractTokenRequest extractTokenRequest){
+        return jwtTokenUtil.extractUsername(extractTokenRequest.getToken());
     }
 
     @PostMapping("/validateToken")
-    public boolean validateToken(@RequestBody ExtractTokenRequestDTO extractTokenRequestDTO){
-        return jwtTokenUtil.validateToken(extractTokenRequestDTO.getToken(), extractTokenRequestDTO.getUsername());
+    public boolean validateToken(@RequestBody ExtractTokenRequest extractTokenRequest){
+        return jwtTokenUtil.validateToken(extractTokenRequest.getToken(), extractTokenRequest.getUsername());
     }
 
     @PostMapping("/getNewAccessTokenWithRefresh")
-    public String getNewAccessTokenWithRefresh(@RequestBody ExtractTokenRequestDTO extractTokenRequestDTO){
-        return jwtTokenUtil.getNewAccessTokenWithRefresh(extractTokenRequestDTO.getToken());
+    public String getNewAccessTokenWithRefresh(@RequestBody ExtractTokenRequest extractTokenRequest){
+        return jwtTokenUtil.getNewAccessTokenWithRefresh(extractTokenRequest.getToken());
     }
 }
