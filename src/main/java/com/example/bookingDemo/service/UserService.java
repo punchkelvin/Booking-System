@@ -63,9 +63,11 @@ public class UserService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest){
-        //Authenticate the user
-            //This will use the custom user details service that implements user details service
-            //it is automatically done this way because of the implementation
+        /**
+         * Authenticate the user
+         * This will use the custom user details service that implements user details service
+         * it is automatically done this way because of the implementation
+         * **/
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
