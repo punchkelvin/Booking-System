@@ -18,8 +18,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -45,7 +45,7 @@ public class UserService {
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(RoleEnum.USER)
+                .role(Set.of(RoleEnum.USER))
                 .build();
 
         userRepository.save(user);
@@ -63,9 +63,11 @@ public class UserService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest){
-        //Authenticate the user
-            //This will use the custom user details service that implements user details service
-            //it is automatically done this way because of the implementation
+        /**
+         * Authenticate the user
+         * This will use the custom user details service that implements user details service
+         * it is automatically done this way because of the implementation
+         * **/
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),

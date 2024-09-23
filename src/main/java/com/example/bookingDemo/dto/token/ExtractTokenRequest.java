@@ -4,6 +4,6 @@ import com.example.bookingDemo.dto.authentication.AuthenticationRequest;
 import lombok.Data;
 
 @Data
-public class ExtractTokenRequestDTO extends AuthenticationRequest {
+public class ExtractTokenRequest extends AuthenticationRequest {
     private String token;
 }
