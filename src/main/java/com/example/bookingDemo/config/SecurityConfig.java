@@ -45,15 +45,15 @@ public class SecurityConfig {
                                     .anyRequest().authenticated()  // Authenticate all other requests
                     )
 //                    .authenticationProvider(authenticationProvider())
-                    //In our jwt authentication filter, we implements once per request filter
-                        // (means that every request should be authenticated)
-                    //Hence the authentication state should not be stored in the security context holder
-                    //Here, we make the session to be stateless, spring will create new session for each request
+                    /**
+                     * In our jwt authentication filter, we implements once per request filter
+                     * (means that every request should be authenticated)
+                     * Hence the authentication state should not be stored in the security context holder
+                     * Here, we make the session to be stateless, spring will create new session for each request
+                     * **/
                     .sessionManagement(httpSecuritySessionManagementConfigurer ->
                             httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session management
-
-            // Make sure the JWT filter is not blocking this request, you can temporarily comment it out
-             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
             return httpSecurity.build();
         } catch (Exception e) {
