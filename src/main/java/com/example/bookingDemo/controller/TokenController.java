@@ -46,8 +46,11 @@ public class TokenController {
         return jwtTokenUtil.validateToken(extractTokenRequest.getToken(), extractTokenRequest.getUsername());
     }
 
+    /**
+     * Token is stored in HTTP only cookie, so the client doesn't have to handle it directly
+     * **/
     @PostMapping("/getNewAccessTokenWithRefresh")
-    public String getNewAccessTokenWithRefresh(@RequestBody ExtractTokenRequest extractTokenRequest){
-        return jwtTokenUtil.getNewAccessTokenWithRefresh(extractTokenRequest.getToken());
+    public String getNewAccessTokenWithRefresh(@CookieValue("refreshToken") String refreshToken){
+        return jwtTokenUtil.getNewAccessTokenWithRefresh(refreshToken);
     }
 }

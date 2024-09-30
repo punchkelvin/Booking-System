@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CORS Test</title>
+  </head>
+  <body>
+    <h2>Test CORS in Spring Boot</h2>
+    <button onclick="makeCorsRequest()">Make CORS Request</button>
+    <div id="response"></div>
+
+    <script>
+      function makeCorsRequest() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:8080/token/getSecret", true); // Replace with your actual Spring Boot API URL
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              document.getElementById("response").innerHTML = "CORS request succeeded: " + xhr.responseText;
+            } else {
+              document.getElementById("response").innerHTML = "CORS request failed with status: " + xhr.status;
+            }
+          }
+        };
+        xhr.send();
+      }
+    </script>
+  </body>
+</html>
