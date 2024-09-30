@@ -54,7 +54,7 @@ public class JwtTokenUtil {
                 //Anything below here is Registered Claims that follows JWTs standard
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hours from current time
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 30 * 60)) // 1/2 hours from current time
                 .signWith(getJwtSigningKey(), SignatureAlgorithm.HS256)
                 .compact(); //finalize the creation of jwt
     }

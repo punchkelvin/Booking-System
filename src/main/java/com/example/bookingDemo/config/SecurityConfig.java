@@ -1,11 +1,11 @@
 package com.example.bookingDemo.config;
 
+import com.example.bookingDemo.config.cors.CorsConfig;
 import com.example.bookingDemo.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,13 +26,15 @@ public class SecurityConfig {
     CustomAccessDeniedHandler customAccessDeniedHandler;
     @Autowired
     CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired
+    CorsConfig corsConfig;
 
     @Bean
     //Security Filter chain is a bean that is responsible for configuring all the http security of our application
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         try {
             httpSecurity
-                    .cors(Customizer.withDefaults())
+                    .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfig.corsConfigurationSource()))
                     .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable()) // Disable CSRF
                     .exceptionHandling(exceptionHandling -> exceptionHandling
                             .authenticationEntryPoint(customAuthenticationEntryPoint)

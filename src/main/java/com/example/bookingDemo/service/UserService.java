@@ -93,4 +93,14 @@ public class UserService {
 
         return authenticationResponse;
     }
+
+    public String logout(String refreshToken){
+        //Find Refresh Token in DB
+        RefreshToken token = refreshTokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Refresh Token Not Found"));
+
+        refreshTokenRepository.delete(token);
+
+        return "User Logout Successfully";
+    }
 }
